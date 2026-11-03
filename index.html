@@ -190,6 +190,76 @@ footer{max-width:1180px;margin:0 auto;padding:6px 16px 24px;font-size:12.5px;col
 .dt .sd{height:100%}
 .dt .sd img{aspect-ratio:auto;width:100%;height:100%;object-fit:contain}
 .dt .ph{height:100%;aspect-ratio:auto;min-height:200px}
+
+/* ===== 手機版版面（僅在選擇手機版時啟用）===== */
+html.m,html.m body{overscroll-behavior:none;-webkit-text-size-adjust:100%}
+html.m .stage{height:100vh;height:100dvh}
+html.m #gis{position:absolute;inset:0;height:auto}
+/* 頂部標題列 */
+html.m .mtop{position:fixed;z-index:5;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(239,236,240,.95);border-top:8px solid #a17b66;padding:4px 10px 6px;padding-top:calc(4px + env(safe-area-inset-top));box-shadow:0 2px 8px rgba(74,44,23,.25)}
+html.m .mtop h1.ttl{display:grid;grid-template-columns:auto auto auto;grid-template-areas:"a b c";align-items:center;column-gap:5px;margin:0;font-family:"Noto Serif TC","Songti TC",serif;font-weight:900;letter-spacing:0;color:#722604}
+html.m .mtop .ttl .t1{font-size:36px;line-height:1;text-shadow:2px 2px 0 #ddb983}
+html.m .mtop .ttl .t2{font-size:16px;line-height:1;text-shadow:1px 1px 0 #ddb983}
+html.m .mtop .ttl .t3{font-size:23px;line-height:1;letter-spacing:.02em;white-space:nowrap;text-shadow:2px 2px 0 #ddb983}
+html.m .mtop .rb{min-height:38px;padding:4px 12px;white-space:nowrap;flex:none}
+/* 底部面板（可收合） */
+html.m .pn.sheet{position:fixed;z-index:6;left:0;right:0;top:auto;bottom:0;width:auto;max-width:640px;margin:0 auto;height:calc(84px + env(safe-area-inset-bottom));overflow:hidden;border-radius:18px 18px 0 0;border-width:1px 1px 0 1px;padding:0 10px env(safe-area-inset-bottom);background:rgba(239,236,240,.97);box-shadow:0 -4px 14px rgba(74,44,23,.25);display:flex;flex-direction:column;gap:6px;-webkit-backdrop-filter:none;backdrop-filter:none}
+html.m .pn.sheet.exp{height:min(50vh,440px)}
+html.m .pn.sheet:not(.exp) .ctl:not(.rts),html.m .pn.sheet:not(.exp) .lst{display:none}
+html.m .grab{flex:none;display:grid;place-items:center;height:26px;width:100%;border:0;background:none;padding:0}
+html.m .grab span{display:block;width:44px;height:5px;border-radius:99px;background:#a17b66}
+html.m .pn.sheet .ctl{flex:none;margin:0;gap:6px}
+html.m .pn.sheet .rts{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+html.m .pn.sheet .rts::-webkit-scrollbar{display:none}
+html.m .pn.sheet .rts .rb{white-space:nowrap;flex:none}
+html.m .pn.sheet .rb{min-height:38px}
+html.m .pn.sheet .sw{min-height:38px}
+html.m .pn.sheet .lst{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:4px 4px 24px;-webkit-overflow-scrolling:touch}
+html.m .pn.sheet .lst h2{margin:0 0 8px 2px}
+html.m .pn.sheet .card{margin:0 0 8px}
+html.m .pn.sheet .ch{min-height:56px;width:100%}
+html.m .cr{padding:10px 4px 0;font-size:12.5px;line-height:1.6;color:#6b4430}html.m .cr p{margin:0 0 4px}
+/* 店家詳情：底部抽屜 */
+html.m .dt{position:fixed;z-index:7;left:0;right:0;top:auto;bottom:0;width:auto;max-width:640px;margin:0 auto;max-height:min(62vh,520px);border-radius:18px 18px 0 0;padding:12px 14px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(74,44,23,.3)}
+html.m .dt .x{font-size:28px;line-height:1;min-width:40px;min-height:40px}
+html.m .ov{z-index:20}
+/* 地圖元件避開頂欄與底部面板 */
+html.m .leaflet-top{top:calc(var(--tb,66px) + 10px)}
+html.m .leaflet-bottom{bottom:calc(var(--cov,88px) + 10px);transition:bottom .22s ease}
+html.m .cmp svg{width:34px;height:42px}
+html.m .mk{width:36px;height:36px}html.m .mk img{width:24px;height:24px}
+html.m .mk i{width:16px;height:16px;font-size:10px;line-height:14px;right:-6px;top:-6px}
+html.m .leaflet-tooltip.lb{font-size:13px}
+@media(max-width:380px){html.m .mtop .ttl .t1{font-size:30px}html.m .mtop .ttl .t3{font-size:19px}html.m .mtop .rb{padding:4px 9px;font-size:14px}}
+@media(prefers-reduced-motion:no-preference){html.m .pn.sheet{transition:height .22s ease}}
+
+/* ===== 版面選擇畫面 ===== */
+.pick{position:fixed;inset:0;z-index:100;overflow:auto;background:#efecf0;display:flex;flex-direction:column;align-items:center;padding:0 16px 24px}
+.pick:before{content:"";position:fixed;top:0;left:0;right:0;height:14px;background:#a17b66}
+.pick .in{width:100%;max-width:560px;margin:auto;padding-top:34px;text-align:center}
+.pick h1.ttl{display:inline-grid;grid-template-columns:auto auto auto;grid-template-areas:"a b c";align-items:center;column-gap:8px;margin:0 0 6px;font-family:"Noto Serif TC","Songti TC",serif;font-weight:900;letter-spacing:0;color:#722604}
+.pick .ttl .t1{font-size:clamp(44px,13vw,66px);line-height:1;text-shadow:3px 3px 0 #ddb983,5px 5px 0 #e9dac5}
+.pick .ttl .t2{font-size:clamp(20px,6vw,30px);line-height:1.05;text-shadow:2px 2px 0 #ddb983}
+.pick .ttl .t3{font-size:clamp(28px,8.4vw,44px);line-height:1.05;letter-spacing:.03em;white-space:nowrap;text-shadow:3px 3px 0 #ddb983}
+.pick .sub{margin:0 0 4px;font-size:13px;line-height:1.5;color:#6b4430}
+.pick h2{margin:26px 0 12px;font:700 17px "Noto Serif TC",serif;color:#a23a22}
+.pick .opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.pick .opts{grid-template-columns:1fr}}
+.pick .opt{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 14px 18px;border:2px solid #cdb88a;border-radius:22px;background:#d6c08f;color:#4a2c17;text-align:center;font:inherit;cursor:pointer}
+.pick .opt:hover,.pick .opt:focus-visible{border-color:#6f9440;box-shadow:0 0 0 3px #6f9440}
+.pick .opt b{font:700 22px "Noto Serif TC",serif;color:#a23a22}
+.pick .opt span{font-size:13.5px;line-height:1.5}
+.pick .opt em{position:absolute;top:-10px;right:14px;font-style:normal;font-size:12px;font-weight:700;background:#6f9440;color:#fff;border-radius:99px;padding:1px 10px}
+.pick .note{margin:16px 0 0;font-size:12.5px;color:#6b4430}
+.swm{border:2px solid #722604;background:#722604;color:#fff;font:700 15px/1 'Noto Sans TC',sans-serif;border-radius:99px;padding:8px 14px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 0 #4a2c17}
+.swm:hover,.swm:focus-visible{background:#a23a22;border-color:#a23a22}
+html.m .mtop .side{display:flex;flex-direction:column;gap:4px;flex:none}
+html.m .mtop .side .rb,html.m .mtop .side .swm{min-height:28px;height:28px;padding:0 12px;font-size:13px;line-height:1;box-shadow:none}
+.md{color:#4a2c17}
+.w5 h4{margin:10px 0 6px;font:700 17px "Noto Serif TC",serif;color:#a23a22}
+.w5 ul{margin:0;padding-left:1.2em}.w5 li{margin:0 0 8px;line-height:1.75}
+.w5h{margin:12px 0;color:#6b4430}
+.w5src{margin:14px 0 0;font-size:12.5px;color:#6b4430}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 </head>
@@ -227,9 +297,41 @@ const R = {
 const AREAS = {town: {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[120.639713,24.17688],[120.638406,24.177287],[120.637455,24.177598],[120.637446,24.17902],[120.637318,24.179071],[120.636825,24.179153],[120.636814,24.179733],[120.63528,24.180084],[120.635558,24.181116],[120.63583,24.181866],[120.636008,24.182351],[120.636349,24.183279],[120.638749,24.182178],[120.638963,24.182212],[120.639263,24.182228],[120.639599,24.182231],[120.64039,24.182239],[120.640412,24.182169],[120.640457,24.181324],[120.640799,24.181354],[120.64078,24.181088],[120.640729,24.180975],[120.640715,24.180935],[120.64071,24.180916],[120.640706,24.180886],[120.64072,24.180853],[120.641234,24.180636],[120.641518,24.180304],[120.641505,24.180084],[120.641801,24.179987],[120.64134,24.179296],[120.640961,24.178729],[120.641173,24.178581],[120.639713,24.17688]]]}}]}, old: {"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[120.645484,24.19238],[120.645713,24.191963],[120.645768,24.191966],[120.645779,24.191942],[120.646068,24.19135],[120.646049,24.19121],[120.646131,24.190897],[120.646105,24.19068],[120.646058,24.190497],[120.645492,24.190322],[120.645044,24.189926],[120.644903,24.189709],[120.644916,24.189327],[120.644882,24.189282],[120.644888,24.188955],[120.644528,24.188119],[120.644338,24.188123],[120.644336,24.187967],[120.644339,24.187441],[120.64617,24.187529],[120.646312,24.18752],[120.649604,24.187557],[120.649997,24.187569],[120.650033,24.186242],[120.650068,24.184931],[120.650189,24.182902],[120.650203,24.181972],[120.648217,24.181947],[120.647616,24.181936],[120.647115,24.181926],[120.646298,24.181911],[120.646299,24.181891],[120.646329,24.18117],[120.646334,24.181107],[120.646356,24.1808],[120.64641,24.180755],[120.646429,24.180552],[120.646431,24.180495],[120.646451,24.179974],[120.646484,24.179114],[120.646479,24.178864],[120.645728,24.178858],[120.645735,24.178501],[120.645737,24.177937],[120.645126,24.177924],[120.645127,24.177879],[120.645133,24.177718],[120.64327,24.177572],[120.643248,24.177364],[120.643234,24.177226],[120.643111,24.176903],[120.642996,24.176601],[120.642861,24.176241],[120.642856,24.176227],[120.642693,24.175794],[120.642687,24.17578],[120.642472,24.175209],[120.64216,24.174725],[120.641919,24.174406],[120.641549,24.173958],[120.641157,24.173486],[120.640748,24.17297],[120.64044,24.172635],[120.64023,24.172407],[120.6399,24.172049],[120.639441,24.171619],[120.639076,24.171253],[120.639053,24.171201],[120.638946,24.170952],[120.638912,24.170851],[120.638843,24.170507],[120.63884,24.170094],[120.638788,24.169722],[120.638616,24.1695],[120.638457,24.169617],[120.638328,24.169714],[120.638222,24.169793],[120.638043,24.169928],[120.637379,24.170427],[120.63664,24.170988],[120.636701,24.171143],[120.637021,24.172185],[120.637313,24.173237],[120.63737,24.173538],[120.637463,24.173769],[120.637314,24.173792],[120.634668,24.17421],[120.635164,24.175476],[120.631799,24.17601],[120.631642,24.175481],[120.631274,24.175025],[120.63127,24.175028],[120.631151,24.17511],[120.63104,24.175179],[120.63099,24.175211],[120.630888,24.175276],[120.630803,24.17533],[120.630562,24.175481],[120.629745,24.175946],[120.629455,24.176103],[120.628558,24.176572],[120.628371,24.176669],[120.628311,24.176699],[120.628642,24.176699],[120.629059,24.17667],[120.629573,24.176678],[120.630146,24.176691],[120.630446,24.17671],[120.630706,24.17674],[120.630856,24.17677],[120.631031,24.176813],[120.631226,24.176891],[120.631421,24.176993],[120.631603,24.177101],[120.631772,24.177209],[120.631954,24.177352],[120.63213,24.177526],[120.63235,24.177819],[120.632427,24.178074],[120.632543,24.178204],[120.632558,24.178244],[120.632888,24.178099],[120.633299,24.178855],[120.632081,24.179197],[120.632083,24.179201],[120.632113,24.179278],[120.63214,24.17941],[120.632139,24.179576],[120.632112,24.179803],[120.632051,24.18007],[120.632032,24.180121],[120.632003,24.180193],[120.63196,24.180256],[120.631867,24.180296],[120.631827,24.180364],[120.631709,24.180772],[120.631639,24.181099],[120.631642,24.181251],[120.631814,24.181574],[120.632011,24.181816],[120.632147,24.18194],[120.632345,24.182042],[120.63224,24.18225],[120.632376,24.182618],[120.632494,24.182874],[120.632619,24.18284],[120.632631,24.182836],[120.632882,24.183287],[120.633467,24.183506],[120.633859,24.183462],[120.634789,24.184365],[120.635671,24.187332],[120.635608,24.188321],[120.635446,24.188624],[120.63587,24.188651],[120.635791,24.188811],[120.635777,24.189023],[120.635771,24.189098],[120.635758,24.189245],[120.635749,24.189378],[120.635774,24.189513],[120.635813,24.189662],[120.635864,24.189753],[120.63592,24.189816],[120.636035,24.189886],[120.636168,24.189959],[120.636215,24.189995],[120.636276,24.190081],[120.63631,24.190144],[120.636404,24.190368],[120.636511,24.190511],[120.636601,24.19061],[120.636695,24.190669],[120.636716,24.190678],[120.636789,24.19071],[120.636952,24.190722],[120.637159,24.190733],[120.637412,24.190723],[120.637588,24.190707],[120.637752,24.190672],[120.637913,24.190631],[120.638012,24.190616],[120.638115,24.190623],[120.638197,24.190639],[120.638231,24.190668],[120.638179,24.190743],[120.638196,24.190779],[120.638207,24.190867],[120.638182,24.19102],[120.638163,24.19116],[120.638113,24.191334],[120.638102,24.191447],[120.638123,24.191532],[120.638187,24.191634],[120.638286,24.191718],[120.638386,24.191795],[120.63851,24.191849],[120.638878,24.191898],[120.63926,24.191689],[120.639522,24.191543],[120.639546,24.191522],[120.639579,24.191493],[120.639675,24.191543],[120.639707,24.191532],[120.639758,24.191511],[120.639801,24.191503],[120.639833,24.1915],[120.63989,24.191604],[120.639911,24.191607],[120.639954,24.191591],[120.64003,24.191546],[120.640096,24.191496],[120.640169,24.191442],[120.640213,24.191418],[120.640288,24.191375],[120.640325,24.191359],[120.640361,24.19135],[120.640391,24.191328],[120.640728,24.190997],[120.640895,24.190834],[120.640715,24.190381],[120.641608,24.190358],[120.641901,24.190349],[120.642199,24.190669],[120.642677,24.191072],[120.643341,24.191568],[120.64382,24.191851],[120.644451,24.192184],[120.645406,24.192572],[120.645484,24.19238]]]}}]}};
 const get = id => P.find(p => p.id === id);
 
-const pad = () => window.innerWidth > 700 ? {paddingTopLeft: [430, 40], paddingBottomRight: [40, 50]} : {paddingTopLeft: [20, 40], paddingBottomRight: [20, Math.round(window.innerHeight * .6)]};
-function GisMap({sel, route, ar, open, onSel}) {
-  const el = React.useRef(null), st = React.useRef({});
+const RC = {};
+const ROUTE_V = 'xdd-road-v1';
+function fetchRoad(pts) {
+  const co = pts.map(q => q[1].toFixed(6) + ',' + q[0].toFixed(6)).join(';'), q = '?overview=full&geometries=geojson&steps=false&continue_straight=false';
+  const urls = ['https://routing.openstreetmap.de/routed-foot/route/v1/driving/' + co + q, 'https://router.project-osrm.org/route/v1/foot/' + co + q];
+  const go = i => i >= urls.length ? Promise.reject(new Error('noroute')) : fetch(urls[i]).then(r => r.json()).then(j => {
+    if (!j.routes || !j.routes[0]) throw 0;
+    return j.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+  }).catch(() => go(i + 1));
+  return go(0);
+}
+function getRoad(key, pts) {
+  const ck = ROUTE_V + ':' + key;
+  if (RC[key]) return Promise.resolve(RC[key]);
+  try { const c = JSON.parse(localStorage.getItem(ck)); if (c && c.length > 1) return Promise.resolve(RC[key] = c); } catch (e) {}
+  return fetchRoad(pts).then(line => { RC[key] = line; try { localStorage.setItem(ck, JSON.stringify(line)); } catch (e) {} return line; });
+}
+function arrowsOn(line, step) {
+  const out = [], rad = Math.PI / 180, d = (a, b) => Math.hypot((b[0] - a[0]) * 111320, (b[1] - a[1]) * 111320 * Math.cos(a[0] * rad));
+  let acc = step / 2;
+  for (let i = 0; i < line.length - 1; i++) {
+    const a = line[i], b = line[i + 1], L0 = d(a, b);
+    if (L0 < 1) continue;
+    const ang = Math.atan2((b[1] - a[1]) * Math.cos(a[0] * rad), b[0] - a[0]) / rad;
+    let pos = acc;
+    while (pos <= L0) { const t = pos / L0; out.push({ll: [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t], ang}); pos += step; }
+    acc = pos - L0;
+  }
+  return out;
+}
+const cover = (open, exp) => open != null ? Math.min(window.innerHeight * .62, 520) : exp ? Math.min(window.innerHeight * .5, 440) : 84;
+function GisMap({sel, route, ar, open, exp, mobile, onSel}) {
+  const el = React.useRef(null), st = React.useRef({}), cv = React.useRef(84), first = React.useRef(true), [rd, setRd] = React.useState({});
+  cv.current = cover(open, exp);
+  const pad = () => mobile ? {paddingTopLeft: [16, 72], paddingBottomRight: [16, cv.current + 16]} : {paddingTopLeft: [430, 40], paddingBottomRight: [40, 50]};
   const ids = r => r === 'all' ? P.map(p => p.id) : R[r].ids;
   React.useEffect(() => {
     const m = L.map(el.current, {zoomControl: false}).setView([24.1805, 120.6395], 17);
@@ -247,25 +349,37 @@ function GisMap({sel, route, ar, open, onSel}) {
     const {m, g} = st.current; g.clearLayers(); const rt = R[route];
     [['old', '#c0392b', '#e74c3c', .15], ['town', '#1d6fb8', '#3b8fd9', .18]].forEach(a => ar[a[0]] && L.geoJSON(AREAS[a[0]], {interactive: false, style: {color: a[1], weight: 3, dashArray: '10 8', fillColor: a[2], fillOpacity: a[3]}}).addTo(g));
     if (rt.line.length) {
-      const pts = rt.line.map(i => [get(i).lat, get(i).lng]);
-      L.polyline(pts, {color: '#7a2a10', weight: 4, opacity: .9}).addTo(g);
-      for (let k = 0; k < pts.length - 1; k++) {
-        const a = pts[k], b = pts[k + 1], ang = Math.atan2((b[1] - a[1]) * Math.cos(a[0] * Math.PI / 180), b[0] - a[0]) * 180 / Math.PI;
-        L.marker([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], {interactive: false, keyboard: false, icon: L.divIcon({className: '', iconSize: [18, 18], iconAnchor: [9, 9], html: '<div style="transform:rotate(' + ang + 'deg);color:#7a2a10;font-size:17px;line-height:18px;text-align:center;text-shadow:0 0 3px #fff">▲</div>'})}).addTo(g);
-      }
+      const pts = rt.line.map(i => [get(i).lat, get(i).lng]), road = rd[route];
+      if (road) {
+        L.polyline(road, {color: '#fff', weight: 8, opacity: .85, lineJoin: 'round'}).addTo(g);
+        L.polyline(road, {color: '#7a2a10', weight: 4, opacity: .95, lineJoin: 'round'}).addTo(g);
+        arrowsOn(road, 90).forEach(o => L.marker(o.ll, {interactive: false, keyboard: false, icon: L.divIcon({className: '', iconSize: [16, 16], iconAnchor: [8, 8], html: '<div style="transform:rotate(' + o.ang + 'deg);color:#7a2a10;font-size:14px;line-height:16px;text-align:center;text-shadow:0 0 3px #fff,0 0 3px #fff">▲</div>'})}).addTo(g));
+      } else L.polyline(pts, {color: '#7a2a10', weight: 3, opacity: .55, dashArray: '4 8'}).addTo(g);
     }
     P.forEach(p => {
-      const core = !p.x, z = 42, off = p.off || 0, on = core ? rt.ids.includes(p.id) : route === 'all', isSel = sel === p.id;
+      const core = !p.x, z = mobile ? 36 : 42, off = p.off || 0, on = core ? rt.ids.includes(p.id) : route === 'all', isSel = sel === p.id;
       const idx = rt.ids.indexOf(p.id), num = route === 'all' ? p.id : (idx >= 0 ? idx + 1 : '');
       const html = '<div class="mk' + (isSel ? ' sel' : '') + (on ? '' : ' dim') + '"><img src="' + ICON[p.i] + '" alt="">' + (num === '' ? '' : '<i>' + num + '</i>') + '</div>';
       const dir = p.dir || (off > 0 ? 'left' : off < 0 ? 'right' : 'bottom');
       const mk = L.marker([p.lat, p.lng], {title: p.n, zIndexOffset: isSel ? 1000 : core ? 100 : 0,
         icon: L.divIcon({className: '', iconSize: [z, z], iconAnchor: [z / 2 + off, z / 2], html})})
         .on('click', () => onSel(p.id))
-        .bindTooltip(p.n, {permanent: core && on, direction: dir, className: 'lb' + (isSel ? ' ls' : ''), offset: dir === 'bottom' ? [0, z / 2] : dir === 'top' ? [0, -z / 2] : [dir === 'left' ? -z / 2 : z / 2, 0]}).addTo(g);
+        .bindTooltip(p.n, {permanent: mobile ? isSel : (core && on), direction: dir, className: 'lb' + (isSel ? ' ls' : ''), offset: dir === 'bottom' ? [0, z / 2] : dir === 'top' ? [0, -z / 2] : [dir === 'left' ? -z / 2 : z / 2, 0]}).addTo(g);
     });
-  }, [sel, route, ar]);
-  React.useEffect(() => { const p = get(sel), m = st.current.m; m.panTo(m.unproject(m.project([p.lat, p.lng]).subtract([window.innerWidth > 700 ? (open != null ? 390 : 210) : 0, 0]))); }, [sel, open]);
+  }, [sel, route, ar, mobile, rd]);
+  React.useEffect(() => {
+    const rt = R[route]; if (!rt.line.length || rd[route]) return;
+    let dead = false;
+    getRoad(route, rt.line.map(i => [get(i).lat, get(i).lng])).then(l => { if (!dead) setRd(o => Object.assign({}, o, {[route]: l})); }).catch(() => {});
+    return () => { dead = true; };
+  }, [route]);
+  React.useEffect(() => {
+    const m = st.current.m, p = get(sel);
+    if (!mobile) { m.panTo(m.unproject(m.project([p.lat, p.lng]).subtract([open != null ? 390 : 210, 0]))); return; }
+    if (first.current) { first.current = false; return; }
+    const H = m.getSize().y, vis = (64 + (H - cv.current)) / 2;
+    m.panTo(m.unproject(m.project([p.lat, p.lng]).add([0, H / 2 - vis])));
+  }, [sel, open, exp]);
   React.useEffect(() => {
     const b = L.latLngBounds(ids(route).map(i => [get(i).lat, get(i).lng]));
     st.current.m.fitBounds(b, Object.assign({maxZoom: 18}, pad()));
@@ -286,16 +400,34 @@ function Modal({title, onClose, children}) {
 }
 
 const W5 = [
- ['who','Who｜誰','張廖世居家族產權，與在地職人、居民共同形塑老街。'],
- ['what','What｜什麼','從打鐵、米糧集散，逐步發展成傳統市場街。'],
- ['when','When｜何時','清道光年間開始形成市街。'],
- ['where','Where｜哪裡','光明路與西屯路二段的路口，是西大墩舊聚落的核心。'],
- ['why','Why｜為什麼','這裡是全區最古老的市街，保存了西屯的生活脈絡。']];
+ ['who', 'Who｜誰', [
+  '原住民：平埔族巴宰族岸裡社原居於此地。',
+  '開拓者：清雍正年間，來自福建漳州詔安的客家張廖家族，以「割地換水」取得開墾權，引水築圳、招佃開墾。',
+  '居民：街市形成後，居民多為張、廖二姓，老街上的打鐵、米糧、糕餅等老店延續至今。']],
+ ['what', 'What｜什麼', [
+  '從稻米與農產品的產地開始：居民在光明路與西屯路交叉口交易蔬菜、稻米、肉品。',
+  '逐漸有打鐵店、餅店、米店等固定店舖進駐，形成街市，成為「西屯老街」的雛型。',
+  '日治時期沿街出現兩層樓式紅磚街屋、傳統藥房、雜貨店與糕餅店，傳統建築保留至今。']],
+ ['when', 'When｜何時', [
+  '清雍正十年（1732年）：墾首與岸裡社立約，西大墩開始開發。',
+  '清道光年間：光明路與西屯路口形成街市，成為西屯老街的雛型。',
+  '清咸豐11年（1861年）：清靈宮建成，成為聚落的信仰中心。',
+  '明治36年（1903年）：西屯國小創校。',
+  '大正9年（1920年）：西大墩街改名為西屯，劃歸臺中州大屯郡西屯庄。']],
+ ['where', 'Where｜哪裡', [
+  '臺中市西屯區光明路與西屯路二段交叉口一帶，約在今西墩里、西安里、至善里、西平里。',
+  '名稱源於與東大墩（今臺中市中區）相對稱，西屯路是連接東、西大墩的重要通道。',
+  'USR 計畫範圍：北至福星路、西至環中路二段、南至福科路與逢明路、東至西屯路二段297-8巷，面積約0.27平方公里。']],
+ ['why', 'Why｜為什麼', [
+  '西大墩是西屯早期發展的核心，也是全區最古老的市街，承載百餘年的聚落歷史、地方信仰與傳統產業。',
+  '在重劃區與經貿園區等現代化建設快速推進的西屯，這些歷史文化仍值得被重新認識與記錄。',
+  '本計畫透過文獻、老店訪談與走讀地圖，帶領西屯國小學生認識西大墩，提升在地文化認同，延續文化傳承。']]];
 function Story() {
   const [k, setK] = useState(null), cur = W5.find(r => r[0] === k);
   return h('div', null,
     h('div', {className: 'ctl'}, W5.map(r => h('button', {key: r[0], className: 'rb' + (k === r[0] ? ' on' : ''), 'aria-pressed': k === r[0], onClick: () => setK(r[0])}, r[0]))),
-    cur && h('dl', null, h('dt', null, cur[1]), h('dd', null, cur[2])));
+    cur ? h('div', {className: 'w5'}, h('h4', null, cur[1]), h('ul', null, cur[2].map((t, i) => h('li', {key: i}, t)))) : h('p', {className: 'w5h'}, '請點選上方按鈕，查看內容。'),
+    h('p', {className: 'w5src'}, '資料整理自 USR 報告「西大墩尋根」。'));
 }
 
 const YEARS = ['2026', '2016', '2006'];
@@ -322,20 +454,21 @@ function Detail({p, onClose}) {
     h('p', {className: 'one'}, p.o), h('p', null, '地址：' + p.a), h('p', null, p.d), h('h4', {className: 'hh'}, '歷史變化'), h(Slides, {p}));
 }
 
-function App() {
+function DesktopApp({onSwitch}) {
   const [sel, setSel] = useState(1), [route, setRoute] = useState('all'), [ar, setAr] = useState({town: false, old: false}), [modal, setModal] = useState(false), [open, setOpen] = useState(null);
   const pick = (id, card) => { setOpen(o => card && sel === id && o === id ? null : id); setSel(id); };
   React.useEffect(() => { const e = document.getElementById('c' + sel); e && e.scrollIntoView({block: 'nearest', behavior: 'smooth'}); }, [sel]);
   const on = ar.town || ar.old;
   const rt = R[route], order = route === 'all' ? P : rt.ids.map(get).concat(P.filter(p => !rt.ids.includes(p.id)));
   return h('div', {className: 'stage'},
-    h(GisMap, {sel, route, ar, open, onSel: id => pick(id, false)}),
+    h(GisMap, {sel, route, ar, open, mobile: false, onSel: id => pick(id, false)}),
     h('aside', {className: 'list pn', 'aria-label': '標題、地圖操作與店家資訊'},
       h('div', {className: 'tt'}, h('h1', {className: 'ttl', 'aria-label': '西屯老街走讀地圖'}, h('span', {className: 't1', 'aria-hidden': true}, '西屯'), h('span', {className: 't2', 'aria-hidden': true}, '老', h('br'), '街'), h('span', {className: 't3', 'aria-hidden': true}, '走讀地圖')), h('p', {className: 'sub'}, '逢甲大學都市計畫與空間資訊學系 115學年度第一學期 都市計畫與空間資訊實習(四) 第五組'), h('p', {className: 'sub'}, 'USR 計畫：西屯老街與西屯國小學生走讀活動')),
       h('div', {className: 'ctl'},
         h('button', {className: 'rb', onClick: () => setModal(true)}, '歷史故事'),
         Object.keys(R).map(k => h('button', {key: k, className: 'rb' + (route === k ? ' on' : ''), 'aria-pressed': route === k, onClick: () => setRoute(k)}, R[k].t)),
-        h('button', {className: 'sw' + (on ? ' on' : ''), role: 'switch', 'aria-checked': on, onClick: () => setAr(a => a.town || a.old ? {town: false, old: false} : {town: true, old: true})}, h('i'), '範圍')),
+        h('button', {className: 'sw' + (on ? ' on' : ''), role: 'switch', 'aria-checked': on, onClick: () => setAr(a => a.town || a.old ? {town: false, old: false} : {town: true, old: true})}, h('i'), '範圍'),
+        h('button', {className: 'swm', onClick: onSwitch}, '切換版面')),
       on && h('div', {className: 'ctl'}, [['old', '西大墩範圍', '#c0392b'], ['town', '西屯老街範圍', '#1d6fb8']].map(r => h('button', {key: r[0], className: 'rb' + (ar[r[0]] ? ' on' : ''), 'aria-pressed': ar[r[0]], style: {borderBottom: '4px solid ' + r[2]}, onClick: () => setAr(a => Object.assign({}, a, {[r[0]]: !a[r[0]]}))}, r[1]))),
       h('div', {className: 'lst'}, h('h2', null, route === 'all' ? '店家資訊' : '店家資訊・' + rt.t),
       order.map(p => {
@@ -346,10 +479,75 @@ function App() {
           null);
       }))),
     open != null && h(Detail, {key: open, p: get(open), onClose: () => setOpen(null)}),
-    h('div', {className: 'ft'}, '指導教授：劉立偉教授、翁岳嵩教授、柯佩吟教授'),
+    h('div', {className: 'ft'}, '指導教授：劉立偉教授、翁岳嵩教授、柯佩吟教授', null),
     modal && h(Modal, {title: '歷史故事', onClose: () => setModal(false)}, h(Story)));
 }
-ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+
+function MobileApp({onSwitch}) {
+  const [sel, setSel] = useState(1), [route, setRoute] = useState('all'), [ar, setAr] = useState({town: false, old: false}), [modal, setModal] = useState(false), [open, setOpen] = useState(null), [exp, setExp] = useState(true);
+  const pick = id => { setOpen(id); setSel(id); };
+  React.useEffect(() => { const e = document.getElementById('c' + sel); e && exp && e.scrollIntoView({block: 'nearest', behavior: 'smooth'}); }, [sel]);
+  // 依實際高度，讓地圖控制項（指北針、縮放、比例尺）永遠在標題列與底部面板之間
+  React.useEffect(() => {
+    const root = document.documentElement;
+    const upd = () => {
+      const els = [document.querySelector('.sheet'), document.querySelector('.dt')].filter(Boolean);
+      const t = Math.min.apply(null, els.map(e => e.getBoundingClientRect().top));
+      root.style.setProperty('--cov', Math.max(0, window.innerHeight - t) + 'px');
+      const hd = document.querySelector('.mtop');
+      if (hd) root.style.setProperty('--tb', hd.getBoundingClientRect().bottom + 'px');
+    };
+    const ro = window.ResizeObserver ? new ResizeObserver(upd) : null;
+    const id = requestAnimationFrame(() => { upd(); if (ro) [document.querySelector('.sheet'), document.querySelector('.dt'), document.querySelector('.mtop')].forEach(e => e && ro.observe(e)); });
+    window.addEventListener('resize', upd);
+    return () => { cancelAnimationFrame(id); ro && ro.disconnect(); window.removeEventListener('resize', upd); };
+  }, [open, exp]);
+  const on = ar.town || ar.old;
+  const rt = R[route], order = route === 'all' ? P : rt.ids.map(get).concat(P.filter(p => !rt.ids.includes(p.id)));
+  return h('div', {className: 'stage'},
+    h(GisMap, {sel, route, ar, open, exp, mobile: true, onSel: pick}),
+    h('header', {className: 'mtop'},
+      h('h1', {className: 'ttl', 'aria-label': '西屯老街走讀地圖'}, h('span', {className: 't1', 'aria-hidden': true}, '西屯'), h('span', {className: 't2', 'aria-hidden': true}, '老', h('br'), '街'), h('span', {className: 't3', 'aria-hidden': true}, '走讀地圖')),
+      h('div', {className: 'side'}, h('button', {className: 'rb', onClick: () => setModal(true)}, '歷史故事'), h('button', {className: 'swm', onClick: onSwitch}, '切換版面'))),
+    h('aside', {className: 'pn sheet' + (exp ? ' exp' : ''), 'aria-label': '地圖操作與店家資訊'},
+      h('button', {className: 'grab', 'aria-expanded': exp, 'aria-label': exp ? '收合店家清單' : '展開店家清單', onClick: () => setExp(!exp)}, h('span')),
+      h('div', {className: 'ctl rts'},
+        Object.keys(R).map(k => h('button', {key: k, className: 'rb' + (route === k ? ' on' : ''), 'aria-pressed': route === k, onClick: () => setRoute(k)}, R[k].t))),
+      h('div', {className: 'ctl'},
+        h('button', {className: 'sw' + (on ? ' on' : ''), role: 'switch', 'aria-checked': on, onClick: () => setAr(a => a.town || a.old ? {town: false, old: false} : {town: true, old: true})}, h('i'), '範圍'),
+        on && [['old', '西大墩範圍', '#c0392b'], ['town', '西屯老街範圍', '#1d6fb8']].map(r => h('button', {key: r[0], className: 'rb' + (ar[r[0]] ? ' on' : ''), 'aria-pressed': ar[r[0]], style: {borderBottom: '4px solid ' + r[2]}, onClick: () => setAr(a => Object.assign({}, a, {[r[0]]: !a[r[0]]}))}, r[1]))),
+      h('div', {className: 'lst'}, h('h2', null, route === 'all' ? '店家資訊' : '店家資訊・' + rt.t),
+        order.map(p => {
+          const i = rt.ids.indexOf(p.id), ok = i >= 0;
+          return h('div', {key: p.id, id: 'c' + p.id, className: 'card' + (sel === p.id ? ' sel' : '') + (ok ? '' : ' off')},
+            h('button', {className: 'ch', onClick: () => pick(p.id)},
+              h(Badge, {p}), h('b', null, p.n), h('span', {className: 'tag'}, (route !== 'all' && ok ? '第' + (i + 1) + '站｜' : '') + p.c + '｜' + p.a)));
+        }),
+        h('div', {className: 'cr'}, h('p', null, '逢甲大學都市計畫與空間資訊學系 115學年度第一學期 都市計畫與空間資訊實習(四) 第五組'), h('p', null, 'USR 計畫：西屯老街與西屯國小學生走讀活動'), h('p', null, '指導教授：劉立偉教授、翁岳嵩教授、柯佩吟教授')))),
+    open != null && h(Detail, {key: open, p: get(open), onClose: () => setOpen(null)}),
+    modal && h(Modal, {title: '歷史故事', onClose: () => setModal(false)}, h(Story)));
+}
+
+
+function Chooser({onPick}) {
+  const rec = window.innerWidth <= 700 ? 'm' : 'd';
+  const opt = (k, t, d) => h('button', {className: 'opt', onClick: () => onPick(k)}, rec === k && h('em', null, '建議'), h('b', null, t), h('span', null, d));
+  return h('div', {className: 'pick', role: 'dialog', 'aria-label': '選擇瀏覽版面'}, h('div', {className: 'in'},
+    h('h1', {className: 'ttl', 'aria-label': '西屯老街走讀地圖'}, h('span', {className: 't1', 'aria-hidden': true}, '西屯'), h('span', {className: 't2', 'aria-hidden': true}, '老', h('br'), '街'), h('span', {className: 't3', 'aria-hidden': true}, '走讀地圖')),
+    h('p', {className: 'sub'}, '逢甲大學都市計畫與空間資訊學系 115學年度第一學期'), h('p', {className: 'sub'}, '都市計畫與空間資訊實習(四) 第五組'),
+    h('h2', null, '請選擇瀏覽版面'),
+    h('div', {className: 'opts'}, opt('d', '電腦版', '寬螢幕，左側資訊欄加全景地圖'), opt('m', '手機版', '直式螢幕，全螢幕地圖加底部面板')),
+    h('p', {className: 'note'}, '進入後可隨時按「切換版面」重新選擇。')));
+}
+
+function Root() {
+  const [mode, setMode] = useState(null);
+  React.useEffect(() => { document.documentElement.classList.toggle('m', mode === 'm'); }, [mode]);
+  if (!mode) return h(Chooser, {onPick: setMode});
+  const back = () => setMode(null);
+  return mode === 'm' ? h(MobileApp, {onSwitch: back}) : h(DesktopApp, {onSwitch: back});
+}
+ReactDOM.createRoot(document.getElementById('root')).render(h(Root));
 </script>
 </body>
 </html>
