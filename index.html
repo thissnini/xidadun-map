@@ -260,6 +260,40 @@ html.m .mtop .side .rb,html.m .mtop .side .swm{min-height:28px;height:28px;paddi
 .w5 ul{margin:0;padding-left:1.2em}.w5 li{margin:0 0 8px;line-height:1.75}
 .w5h{margin:12px 0;color:#6b4430}
 .w5src{margin:14px 0 0;font-size:12.5px;color:#6b4430}
+.tlo{list-style:none;margin:6px 0 0;padding:0 0 0 8px;position:relative}
+.tlo:before{content:"";position:absolute;left:15px;top:10px;bottom:14px;width:4px;border-radius:99px;background:#a17b66}
+.tli{position:relative;padding:0 0 18px 38px}
+.tld{position:absolute;left:3px;top:6px;width:20px;height:20px;border-radius:50%;background:#6f9440;border:4px solid #f6f0e2;box-shadow:0 0 0 2px #a17b66}
+.tly{font:900 24px/1.3 "Noto Serif TC",serif;color:#722604;text-shadow:1px 1px 0 #ddb983}
+.tly small{margin-left:10px;font:700 14px "Noto Serif TC",serif;color:#a23a22;text-shadow:none}
+.tlt{margin:2px 0 0;font-size:16px;line-height:1.7;color:#4a2c17}
+.tlh{margin:6px 0 0;padding-top:12px;border-top:2px dashed #cdb88a;font:700 18px "Noto Serif TC",serif;color:#722604}
+.subrow{display:flex;align-items:center;gap:10px}.subrow .subs{flex:1;min-width:0}.subrow .swm{flex:none;font-size:14px;padding:8px 12px}
+.sq{margin:0 0 8px 2px}
+.sq input{display:block;width:100%;height:42px;border:1px solid #cdb88a;border-radius:99px;background:#fff7e8;color:#4a2c17;padding:0 16px;font:inherit;font-size:16px}
+.sq input::placeholder{color:#8a7560}
+.sq input:focus{outline:3px solid #6f9440;outline-offset:1px}
+.noh{margin:6px 4px;color:#6b4430;font-size:15px}
+/* 定位按鈕與提示 */
+.leaflet-bar.locw{border:2px solid rgba(0,0,0,.25);border-radius:6px;background:#fff7e8}
+.loc{display:grid;place-items:center;width:40px;height:40px;border:0;background:#fff7e8;color:#722604;border-radius:4px;padding:0}
+.loc:hover{background:#f3e3c0}.loc.busy{opacity:.55}
+.toast{position:absolute;z-index:1000;left:50%;top:14px;transform:translateX(-50%);max-width:88%;background:#4a2c17;color:#fff7e8;padding:8px 16px;border-radius:99px;font-size:14px;line-height:1.5;text-align:center;box-shadow:0 3px 12px rgba(0,0,0,.3);pointer-events:none}
+html.m .toast{top:calc(var(--tb,66px) + 10px)}
+.gd .w5 li{font-size:16px}.gd .go{display:block;margin:12px auto 0;padding:8px 26px;font-size:16px}
+/* 字級放大 */
+body{font-size:16px}
+.rb{font-size:15px}
+.pn .tag{font-size:15px}
+.pn .card .ch b{font-size:19px}
+.pn .lst h2{font-size:17px}
+.dt p{font-size:16px;line-height:1.75}
+.dt .one{font-size:16.5px}
+.dt .dh b{font-size:20px}
+.dt .cap{font-size:16.5px}
+.w5 li{font-size:16px}
+.leaflet-tooltip.lb,html.m .leaflet-tooltip.lb{font-size:14px}
+.pick .sub{font-size:14px}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 </head>
@@ -342,6 +376,27 @@ function GisMap({sel, route, ar, open, exp, mobile, onSel}) {
     const photo = L.tileLayer(U('PHOTO2'), {maxZoom: 19, attribution: nl + ' 正射影像'});
     new (L.Control.extend({onAdd() { const d = L.DomUtil.create('div', 'cmp'); d.innerHTML = '<svg viewBox="-22 -32 44 54" width="44" height="54" role="img" aria-label="指北針"><circle r="18" fill="#f7f3ea" stroke="#78490a" stroke-width="2"/><text y="-21" text-anchor="middle" font-size="12" font-weight="700" fill="#78490a">N</text><path d="M0-14L6 5 0 1-6 5Z" fill="#b91c1c"/><path d="M0 14L5-3 0 1-5-3Z" fill="#78490a" opacity=".55"/></svg>'; return d; }}))({position: 'topright'}).addTo(m);
     L.control.layers({'通用版電子地圖': emap, '正射影像（空照）': photo}).addTo(m);
+    const me = L.layerGroup().addTo(m);
+    const toast = t => { const c = m.getContainer(), d = L.DomUtil.create('div', 'toast', c); d.textContent = t; d.setAttribute('role', 'status'); setTimeout(() => d.remove(), 3600); };
+    new (L.Control.extend({onAdd() {
+      const w = L.DomUtil.create('div', 'leaflet-bar locw'), b = L.DomUtil.create('button', 'loc', w);
+      b.type = 'button'; b.title = '我的位置'; b.setAttribute('aria-label', '顯示我的位置');
+      b.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></svg>';
+      L.DomEvent.disableClickPropagation(w);
+      b.addEventListener('click', () => {
+        if (!navigator.geolocation) { toast('這個瀏覽器不支援定位'); return; }
+        b.classList.add('busy'); toast('定位中…');
+        navigator.geolocation.getCurrentPosition(pos => {
+          b.classList.remove('busy'); me.clearLayers();
+          const ll = [pos.coords.latitude, pos.coords.longitude];
+          L.circle(ll, {radius: Math.min(pos.coords.accuracy || 20, 200), color: '#1d6fb8', weight: 1, fillColor: '#3b8fd9', fillOpacity: .15, interactive: false}).addTo(me);
+          L.circleMarker(ll, {radius: 8, color: '#fff', weight: 3, fillColor: '#1d6fb8', fillOpacity: 1, interactive: false}).addTo(me);
+          if (m.distance(ll, [24.1805, 120.6395]) > 3000) toast('你目前不在西屯老街附近');
+          else m.setView(ll, Math.max(m.getZoom(), 17));
+        }, () => { b.classList.remove('busy'); toast('無法取得位置，請在瀏覽器允許定位'); }, {enableHighAccuracy: true, timeout: 12000, maximumAge: 15000});
+      });
+      return w;
+    }}))({position: 'bottomright'}).addTo(m);
     st.current = {m, g: L.layerGroup().addTo(m)};
     return () => m.remove();
   }, []);
@@ -392,6 +447,22 @@ function GisMap({sel, route, ar, open, exp, mobile, onSel}) {
   return h('div', {id: 'gis', ref: el, role: 'application', 'aria-label': '西屯老街走讀地圖'});
 }
 
+const norm = t => String(t || '').replace(/台/g, '臺').toLowerCase();
+const matchP = (p, q) => { const k = norm(q).trim(); return !k || [p.n, p.c, p.a].some(x => norm(x).includes(k)); };
+function SearchBox({q, setQ, onEnter}) {
+  return h('div', {className: 'sq'}, h('input', {type: 'search', value: q, placeholder: '搜尋店家、類別或地址', 'aria-label': '搜尋店家', enterKeyHint: 'search', autoComplete: 'off',
+    onChange: e => setQ(e.target.value), onKeyDown: e => { if (e.key === 'Enter') { e.preventDefault(); onEnter(); e.target.blur(); } }}));
+}
+function useGuide() {
+  const [g, setG] = useState(() => { try { return !localStorage.getItem('xdd-guide'); } catch (e) { return true; } });
+  const close = () => { setG(false); try { localStorage.setItem('xdd-guide', '1'); } catch (e) {} };
+  return [g, setG, close];
+}
+function Guide({onClose}) {
+  const T = ['點地圖上的圖示，或點店家清單，可看店家介紹與 2026、2016、2006 年的照片，照片可左右滑動。', '上方按鈕可切換「全部點位」「路線一・孩童」「路線二・一般民眾」，圖示上的數字就是走讀順序。', '「範圍」可顯示西大墩範圍與西屯老街範圍。', '「歷史故事」是西大墩的 5W 介紹。', '搜尋框可用店名、類別或地址找店家，按 Enter 直接前往第一筆。', '地圖右下角的定位鈕可顯示你目前的位置（需允許瀏覽器定位）。', '手機版可拉動底部面板上方的橫條，收合或展開店家清單。'];
+  return h(Modal, {title: '使用說明', onClose}, h('div', {className: 'gd'}, h('div', {className: 'w5'}, h('ul', null, T.map((t, i) => h('li', {key: i}, t)))), h('button', {className: 'rb on go', onClick: onClose}, '開始走讀')));
+}
+
 function Modal({title, onClose, children}) {
   return h('div', {className: 'ov', onClick: onClose},
     h('div', {className: 'md', role: 'dialog', 'aria-modal': true, onClick: e => e.stopPropagation()},
@@ -422,12 +493,21 @@ const W5 = [
   '西大墩是西屯早期發展的核心，也是全區最古老的市街，承載百餘年的聚落歷史、地方信仰與傳統產業。',
   '在重劃區與經貿園區等現代化建設快速推進的西屯，這些歷史文化仍值得被重新認識與記錄。',
   '本計畫透過文獻、老店訪談與走讀地圖，帶領西屯國小學生認識西大墩，提升在地文化認同，延續文化傳承。']]];
+const TL = [
+ ['1732', '清雍正十年', '墾首與岸裡社立約，西大墩開始開發。'],
+ ['清道光年間', '', '光明路與西屯路口形成街市，成為西屯老街的雛型。'],
+ ['1861', '清咸豐11年', '清靈宮建成，成為聚落的信仰中心。'],
+ ['1903', '明治36年', '西屯國小創校。'],
+ ['1920', '大正9年', '西大墩街改名為西屯，劃歸臺中州大屯郡西屯庄。']];
 function Story() {
-  const [k, setK] = useState(null), cur = W5.find(r => r[0] === k);
-  return h('div', null,
-    h('div', {className: 'ctl'}, W5.map(r => h('button', {key: r[0], className: 'rb' + (k === r[0] ? ' on' : ''), 'aria-pressed': k === r[0], onClick: () => setK(r[0])}, r[0]))),
-    cur ? h('div', {className: 'w5'}, h('h4', null, cur[1]), h('ul', null, cur[2].map((t, i) => h('li', {key: i}, t)))) : h('p', {className: 'w5h'}, '請點選上方按鈕，查看內容。'),
-    h('p', {className: 'w5src'}, '資料整理自 USR 報告「西大墩尋根」。'));
+  return h('div', {className: 'tl'},
+    h('ol', {className: 'tlo', 'aria-label': '西大墩歷史時間軸'}, TL.map((e, i) => h('li', {key: i, className: 'tli'},
+      h('span', {className: 'tld', 'aria-hidden': true}),
+      h('div', {className: 'tly'}, e[0], e[1] && h('small', null, e[1])),
+      h('p', {className: 'tlt'}, e[2])))),
+    h('h4', {className: 'tlh'}, '更多背景'),
+    W5.filter(r => r[0] !== 'when').map(r => h('div', {key: r[0], className: 'w5'}, h('h4', null, r[1]), h('ul', null, r[2].map((t, i) => h('li', {key: i}, t))))),
+    h('p', {className: 'w5src'}, '資料整理自第五組 USR 報告章節「西大墩尋根」。'));
 }
 
 const YEARS = ['2026', '2016', '2006'];
@@ -455,23 +535,26 @@ function Detail({p, onClose}) {
 }
 
 function DesktopApp({onSwitch}) {
-  const [sel, setSel] = useState(1), [route, setRoute] = useState('all'), [ar, setAr] = useState({town: false, old: false}), [modal, setModal] = useState(false), [open, setOpen] = useState(null);
+  const [sel, setSel] = useState(1), [route, setRoute] = useState('all'), [ar, setAr] = useState({town: false, old: false}), [modal, setModal] = useState(false), [open, setOpen] = useState(null), [q, setQ] = useState(''), [guide, setGuide, closeGuide] = useGuide();
   const pick = (id, card) => { setOpen(o => card && sel === id && o === id ? null : id); setSel(id); };
   React.useEffect(() => { const e = document.getElementById('c' + sel); e && e.scrollIntoView({block: 'nearest', behavior: 'smooth'}); }, [sel]);
   const on = ar.town || ar.old;
   const rt = R[route], order = route === 'all' ? P : rt.ids.map(get).concat(P.filter(p => !rt.ids.includes(p.id)));
+  const shown = order.filter(p => matchP(p, q));
   return h('div', {className: 'stage'},
     h(GisMap, {sel, route, ar, open, mobile: false, onSel: id => pick(id, false)}),
     h('aside', {className: 'list pn', 'aria-label': '標題、地圖操作與店家資訊'},
-      h('div', {className: 'tt'}, h('h1', {className: 'ttl', 'aria-label': '西屯老街走讀地圖'}, h('span', {className: 't1', 'aria-hidden': true}, '西屯'), h('span', {className: 't2', 'aria-hidden': true}, '老', h('br'), '街'), h('span', {className: 't3', 'aria-hidden': true}, '走讀地圖')), h('p', {className: 'sub'}, '逢甲大學都市計畫與空間資訊學系 115學年度第一學期 都市計畫與空間資訊實習(四) 第五組'), h('p', {className: 'sub'}, 'USR 計畫：西屯老街與西屯國小學生走讀活動')),
+      h('div', {className: 'tt'}, h('h1', {className: 'ttl', 'aria-label': '西屯老街走讀地圖'}, h('span', {className: 't1', 'aria-hidden': true}, '西屯'), h('span', {className: 't2', 'aria-hidden': true}, '老', h('br'), '街'), h('span', {className: 't3', 'aria-hidden': true}, '走讀地圖')), h('div', {className: 'subrow'}, h('div', {className: 'subs'}, h('p', {className: 'sub'}, '逢甲大學都市計畫與空間資訊學系 115學年度第一學期 都市計畫與空間資訊實習(四) 第五組'), h('p', {className: 'sub'}, 'USR 計畫：西屯老街與西屯國小學生走讀活動')), h('button', {className: 'swm', onClick: onSwitch}, '切換版面'))),
       h('div', {className: 'ctl'},
         h('button', {className: 'rb', onClick: () => setModal(true)}, '歷史故事'),
         Object.keys(R).map(k => h('button', {key: k, className: 'rb' + (route === k ? ' on' : ''), 'aria-pressed': route === k, onClick: () => setRoute(k)}, R[k].t)),
         h('button', {className: 'sw' + (on ? ' on' : ''), role: 'switch', 'aria-checked': on, onClick: () => setAr(a => a.town || a.old ? {town: false, old: false} : {town: true, old: true})}, h('i'), '範圍'),
-        h('button', {className: 'swm', onClick: onSwitch}, '切換版面')),
+        h('button', {className: 'rb', onClick: () => setGuide(true)}, '使用說明')),
       on && h('div', {className: 'ctl'}, [['old', '西大墩範圍', '#c0392b'], ['town', '西屯老街範圍', '#1d6fb8']].map(r => h('button', {key: r[0], className: 'rb' + (ar[r[0]] ? ' on' : ''), 'aria-pressed': ar[r[0]], style: {borderBottom: '4px solid ' + r[2]}, onClick: () => setAr(a => Object.assign({}, a, {[r[0]]: !a[r[0]]}))}, r[1]))),
       h('div', {className: 'lst'}, h('h2', null, route === 'all' ? '店家資訊' : '店家資訊・' + rt.t),
-      order.map(p => {
+      h(SearchBox, {q, setQ, onEnter: () => shown[0] && pick(shown[0].id, true)}),
+      shown.length === 0 && h('p', {className: 'noh'}, '找不到符合的店家'),
+      shown.map(p => {
         const i = rt.ids.indexOf(p.id), ok = i >= 0, op = open === p.id;
         return h('div', {key: p.id, id: 'c' + p.id, className: 'card' + (sel === p.id ? ' sel' : '') + (ok ? '' : ' off')},
           h('button', {className: 'ch', 'aria-expanded': op, onClick: () => pick(p.id, true)},
@@ -480,11 +563,12 @@ function DesktopApp({onSwitch}) {
       }))),
     open != null && h(Detail, {key: open, p: get(open), onClose: () => setOpen(null)}),
     h('div', {className: 'ft'}, '指導教授：劉立偉教授、翁岳嵩教授、柯佩吟教授', null),
-    modal && h(Modal, {title: '歷史故事', onClose: () => setModal(false)}, h(Story)));
+    modal && h(Modal, {title: '歷史故事', onClose: () => setModal(false)}, h(Story)),
+    guide && h(Guide, {onClose: closeGuide}));
 }
 
 function MobileApp({onSwitch}) {
-  const [sel, setSel] = useState(1), [route, setRoute] = useState('all'), [ar, setAr] = useState({town: false, old: false}), [modal, setModal] = useState(false), [open, setOpen] = useState(null), [exp, setExp] = useState(true);
+  const [sel, setSel] = useState(1), [route, setRoute] = useState('all'), [ar, setAr] = useState({town: false, old: false}), [modal, setModal] = useState(false), [open, setOpen] = useState(null), [exp, setExp] = useState(true), [q, setQ] = useState(''), [guide, setGuide, closeGuide] = useGuide();
   const pick = id => { setOpen(id); setSel(id); };
   React.useEffect(() => { const e = document.getElementById('c' + sel); e && exp && e.scrollIntoView({block: 'nearest', behavior: 'smooth'}); }, [sel]);
   // 依實際高度，讓地圖控制項（指北針、縮放、比例尺）永遠在標題列與底部面板之間
@@ -504,6 +588,7 @@ function MobileApp({onSwitch}) {
   }, [open, exp]);
   const on = ar.town || ar.old;
   const rt = R[route], order = route === 'all' ? P : rt.ids.map(get).concat(P.filter(p => !rt.ids.includes(p.id)));
+  const shown = order.filter(p => matchP(p, q));
   return h('div', {className: 'stage'},
     h(GisMap, {sel, route, ar, open, exp, mobile: true, onSel: pick}),
     h('header', {className: 'mtop'},
@@ -515,9 +600,12 @@ function MobileApp({onSwitch}) {
         Object.keys(R).map(k => h('button', {key: k, className: 'rb' + (route === k ? ' on' : ''), 'aria-pressed': route === k, onClick: () => setRoute(k)}, R[k].t))),
       h('div', {className: 'ctl'},
         h('button', {className: 'sw' + (on ? ' on' : ''), role: 'switch', 'aria-checked': on, onClick: () => setAr(a => a.town || a.old ? {town: false, old: false} : {town: true, old: true})}, h('i'), '範圍'),
+        h('button', {className: 'rb', onClick: () => setGuide(true)}, '使用說明'),
         on && [['old', '西大墩範圍', '#c0392b'], ['town', '西屯老街範圍', '#1d6fb8']].map(r => h('button', {key: r[0], className: 'rb' + (ar[r[0]] ? ' on' : ''), 'aria-pressed': ar[r[0]], style: {borderBottom: '4px solid ' + r[2]}, onClick: () => setAr(a => Object.assign({}, a, {[r[0]]: !a[r[0]]}))}, r[1]))),
       h('div', {className: 'lst'}, h('h2', null, route === 'all' ? '店家資訊' : '店家資訊・' + rt.t),
-        order.map(p => {
+        h(SearchBox, {q, setQ, onEnter: () => shown[0] && pick(shown[0].id)}),
+        shown.length === 0 && h('p', {className: 'noh'}, '找不到符合的店家'),
+        shown.map(p => {
           const i = rt.ids.indexOf(p.id), ok = i >= 0;
           return h('div', {key: p.id, id: 'c' + p.id, className: 'card' + (sel === p.id ? ' sel' : '') + (ok ? '' : ' off')},
             h('button', {className: 'ch', onClick: () => pick(p.id)},
@@ -525,7 +613,8 @@ function MobileApp({onSwitch}) {
         }),
         h('div', {className: 'cr'}, h('p', null, '逢甲大學都市計畫與空間資訊學系 115學年度第一學期 都市計畫與空間資訊實習(四) 第五組'), h('p', null, 'USR 計畫：西屯老街與西屯國小學生走讀活動'), h('p', null, '指導教授：劉立偉教授、翁岳嵩教授、柯佩吟教授')))),
     open != null && h(Detail, {key: open, p: get(open), onClose: () => setOpen(null)}),
-    modal && h(Modal, {title: '歷史故事', onClose: () => setModal(false)}, h(Story)));
+    modal && h(Modal, {title: '歷史故事', onClose: () => setModal(false)}, h(Story)),
+    guide && h(Guide, {onClose: closeGuide}));
 }
 
 
