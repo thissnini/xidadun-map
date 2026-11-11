@@ -520,7 +520,7 @@ function useGuide() {
   return [g, setG, close];
 }
 function Guide({onClose}) {
-  const T = ['點地圖上的圖示，或點店家清單，可看店家介紹與 2026、2016、2006 年的照片，照片可左右滑動。', '上方按鈕可切換「全部店家」「走讀路線」，選走讀路線時，圖示上的數字就是走讀順序。', '「範圍」可顯示西大墩範圍與西屯老街範圍。', '「歷史故事」是西大墩的 5W 介紹。', '搜尋框可用店名、類別或地址找店家，按 Enter 直接前往第一筆。', '地圖右下角的定位鈕可顯示你目前的位置（需允許瀏覽器定位）。', '手機版可拉動底部面板上方的橫條，收合或展開店家清單。', '按「＋ 新增店家」，在地圖上點選位置，填寫名稱、類別、選擇原因，還可以自己畫 ICON。新增的店家會存在這個瀏覽器裡。'];
+  const T = ['點地圖上的圖示，或點店家清單，可看店家介紹與 2026、2016、2006 年的照片，照片可左右滑動。', '上方按鈕可切換「全部店家」「走讀路線」，選走讀路線時，圖示上的數字就是走讀順序。', '「範圍」可顯示西大墩範圍與西屯老街範圍。', '「歷史故事」是西大墩的 5W 介紹。', '搜尋框可用店名、類別或地址找店家，按 Enter 直接前往第一筆。', '地圖右下角的定位鈕可顯示你目前的位置（需允許瀏覽器定位）。', '手機版可拉動底部面板上方的橫條，收合或展開店家清單。', '按「＋ 新增店家」，在地圖上點選位置，填寫名稱、類別、選擇原因，還可以自己畫 ICON。' + (SYNC_URL ? '新增的店家所有人都看得到，只有新增的那台裝置可以刪除。' : '新增的店家會存在這個瀏覽器裡。')];
   return h(Modal, {title: '使用說明', onClose}, h('div', {className: 'gd'}, h('div', {className: 'w5'}, h('ul', null, T.map((t, i) => h('li', {key: i}, t)))), h('button', {className: 'rb on go', onClick: onClose}, '開始走讀')));
 }
 
@@ -600,8 +600,14 @@ function Detail({p, onClose}) {
 // 類別（之後可直接改這裡的名稱，例如 ['1','美食']）；顏色順序對應 1～5
 const CATS = [['1', '類別 1'], ['2', '類別 2'], ['3', '類別 3'], ['4', '類別 4'], ['5', '類別 5']];
 const CAT_COLOR = ['#c0392b', '#e67e22', '#b8860b', '#1d6fb8', '#8e44ad'];
-const UKEY = 'xdd-user-pts-v1';
-const okIcon = s => typeof s === 'string' && s.length < 60000 && /^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(s);
+// 共用資料庫：貼上 Google Apps Script 網頁應用程式網址（結尾是 /exec）後，所有人新增的店家會同步。留空則只存在各自的瀏覽器。
+const SYNC_URL = 'https://script.google.com/macros/s/AKfycbxuQc3tuKyod35f_DEzWCcrVsqwPvWRWW0l1L_WP4a6XxjD2nzGJqiTJ7qOk9pzcS1m_g/exec';
+const UKEY = 'xdd-user-pts-v1', PKEY = 'xdd-pending-v1', TKEY = 'xdd-token-v1';
+const TOK = (() => { try { let t = localStorage.getItem(TKEY); if (!t) { t = Math.random().toString(36).slice(2) + Date.now().toString(36) + Math.random().toString(36).slice(2); localStorage.setItem(TKEY, t); } return t; } catch (e) { return 'tmp' + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2); } })();
+const postSync = o => fetch(SYNC_URL, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(o)}).then(r => r.json());
+const getPend = () => { try { const a = JSON.parse(localStorage.getItem(PKEY)); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
+const setPend = a => { try { localStorage.setItem(PKEY, JSON.stringify(a)); } catch (e) {} };
+const okIcon = s => typeof s === 'string' && s.length < 45000 && /^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(s);
 const defIcon = c => 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M24 4C15 4 8.5 10.6 8.5 19c0 10.5 15.5 25 15.5 25s15.5-14.5 15.5-25C39.5 10.6 33 4 24 4z" fill="' + c + '" stroke="#fff" stroke-width="2.5"/><circle cx="24" cy="19" r="6.5" fill="#fff"/></svg>');
 const str = (v, n) => typeof v === 'string' ? v.trim().slice(0, n) : '';
 function cleanPt(o) {
@@ -613,7 +619,35 @@ function cleanPt(o) {
 function useAdd() {
   const [pts, setPts] = useState(() => { try { const a = JSON.parse(localStorage.getItem(UKEY)); return Array.isArray(a) ? a.map(cleanPt).filter(Boolean) : []; } catch (e) { return []; } });
   const [pick, setPick] = useState(false), [draft, setDraft] = useState(null), [usel, setUsel] = useState(null), [note, setNote] = useState(''), [fly, setFly] = useState(null), [cf, setCf] = useState('');
-  const put = a => { setPts(a); try { localStorage.setItem(UKEY, JSON.stringify(a)); return true; } catch (e) { setNote('這個瀏覽器無法儲存（可能是無痕模式），重新整理後新增的店家會消失。'); return false; } };
+  const ref = React.useRef(pts); ref.current = pts;
+  const [sync, setSync] = useState(SYNC_URL ? 'wait' : 'off');
+  const cache = a => { try { localStorage.setItem(UKEY, JSON.stringify(a)); return true; } catch (e) { return false; } };
+  const put = a => { ref.current = a; setPts(a); if (!cache(a) && !SYNC_URL) { setNote('這個瀏覽器無法儲存（可能是無痕模式），重新整理後新增的店家會消失。'); return false; } return true; };
+  const pull = async () => {
+    if (!SYNC_URL) return;
+    try {
+      let pend = getPend();
+      for (const id of pend.slice()) {
+        const u = ref.current.find(x => x.id === id);
+        if (!u) { pend = pend.filter(x => x !== id); continue; }
+        const r = await postSync({a: 'add', tok: TOK, pt: u});
+        if (r && r.ok) pend = pend.filter(x => x !== id);
+      }
+      setPend(pend);
+      const res = await fetch(SYNC_URL + (SYNC_URL.indexOf('?') < 0 ? '?' : '&') + 't=' + Date.now()).then(r => r.json());
+      if (!res || !Array.isArray(res.pts)) throw new Error('bad');
+      const remote = res.pts.map(cleanPt).filter(Boolean), ids = new Set(remote.map(x => x.id));
+      put(remote.concat(ref.current.filter(x => pend.indexOf(x.id) >= 0 && !ids.has(x.id))));
+      setSync('ok');
+    } catch (e) { setSync('err'); }
+  };
+  React.useEffect(() => {
+    if (!SYNC_URL) return;
+    pull();
+    const iv = setInterval(pull, 45000), vis = () => { if (!document.hidden) pull(); };
+    document.addEventListener('visibilitychange', vis);
+    return () => { clearInterval(iv); document.removeEventListener('visibilitychange', vis); };
+  }, []);
   const start = () => { setUsel(null); setDraft(null); setNote(''); setPick(true); };
   const cancel = () => { setPick(false); setDraft(null); };
   const onMap = (lat, lng) => { setPick(false); setDraft(d => ({lat: lat, lng: lng, keep: d && d.keep})); };
@@ -621,12 +655,25 @@ function useAdd() {
   const save = f => {
     const u = cleanPt({id: 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), n: f.n, cat: f.cat, why: f.why, by: f.by, lat: draft.lat, lng: draft.lng, icon: f.icon, t: Date.now()});
     if (!u) return false;
-    put(pts.concat(u)); setDraft(null); setUsel(u.id); setNote(''); setFly({lat: u.lat, lng: u.lng, k: Date.now()}); return true;
+    put(ref.current.concat(u)); setDraft(null); setUsel(u.id); setNote(''); setFly({lat: u.lat, lng: u.lng, k: Date.now()});
+    if (SYNC_URL) {
+      setPend(getPend().concat(u.id));
+      postSync({a: 'add', tok: TOK, pt: u}).then(r => {
+        if (r && r.ok) { setPend(getPend().filter(x => x !== u.id)); setNote(''); } else throw new Error((r && r.err) || 'fail');
+      }).catch(() => setNote('網路不穩，店家先存在這台裝置，連上網後會自動送出。'));
+    }
+    return true;
   };
   const sel = id => { const u = pts.find(x => x.id === id); if (!u) return; setUsel(id); setFly({lat: u.lat, lng: u.lng, k: Date.now()}); };
-  const remove = id => { put(pts.filter(x => x.id !== id)); setUsel(null); };
+  const remove = id => {
+    if (!SYNC_URL) { put(pts.filter(x => x.id !== id)); setUsel(null); return; }
+    postSync({a: 'del', tok: TOK, id: id}).then(r => {
+      if (r && r.ok) { put(ref.current.filter(x => x.id !== id)); setPend(getPend().filter(x => x !== id)); setUsel(null); setNote(''); }
+      else setNote('只有新增這個店家的那台裝置可以刪除。');
+    }).catch(() => setNote('網路不穩，暫時無法刪除。'));
+  };
   const vis = pts.filter(u => !cf || cf === 'all' || u.cat === cf);
-  return {pts, vis, cf, setCf, pick, draft, usel, note, fly, setUsel, start, cancel, onMap, repick, save, sel, remove};
+  return {pts, vis, cf, setCf, pick, draft, usel, note: note || (sync === 'err' ? '連不上共用資料，目前只顯示這台裝置已有的店家。' : ''), fly, setUsel, start, cancel, onMap, repick, save, sel, remove};
 }
 
 function IconPad({value, color, onChange}) {
