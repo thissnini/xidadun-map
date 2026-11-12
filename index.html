@@ -294,14 +294,14 @@ html.m .addbar{left:50%;top:calc(var(--tb,66px) + 8px);font-size:15px;padding:6p
 .uf .pos{font-size:14px;color:#6b4430;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .uf .pos .rb{padding:2px 12px;font-size:14px}
 .cats{display:flex;gap:8px;flex-wrap:wrap}
-.cat{width:48px;height:48px;border-radius:50%;border:3px solid;background:#fff7e8;font:700 20px "Noto Sans TC",sans-serif;cursor:pointer;padding:0}
+.cat{min-width:64px;height:46px;border-radius:23px;border:3px solid;background:#fff7e8;font:700 18px "Noto Sans TC",sans-serif;cursor:pointer;padding:0 16px}
 .cat[aria-pressed=true]{color:#fff}
 .pt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
 .pt .rb{padding:2px 10px;font-size:14px;min-height:32px}
 .sw2{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #cdb88a;padding:0;cursor:pointer}
 .sw2[aria-pressed=true]{box-shadow:0 0 0 3px #722604}
 .padw{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
-.pad{display:block;width:min(100%,260px);aspect-ratio:1;border:2px dashed #a17b66;border-radius:14px;touch-action:none;cursor:crosshair;background-color:#fff;background-image:conic-gradient(#f1e8d4 25%,#fff 0 50%,#f1e8d4 0 75%,#fff 0);background-size:20px 20px}
+.pad{display:block;width:min(100%,440px);aspect-ratio:1;border:2px dashed #a17b66;border-radius:14px;touch-action:none;cursor:crosshair;background-color:#fff;background-image:conic-gradient(#f1e8d4 25%,#fff 0 50%,#f1e8d4 0 75%,#fff 0);background-size:20px 20px}
 .uf .err{margin:12px 0 0;color:#b42318;font-weight:700;font-size:15px}
 .uf .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
 .uf .acts .rb{padding:8px 22px;font-size:16px}
@@ -309,7 +309,7 @@ html.m .addbar{left:50%;top:calc(var(--tb,66px) + 8px);font-size:15px;padding:6p
 .pn .lst h2.uh{position:static;margin:14px 0 8px 6px;width:auto;max-width:none;border-radius:99px}
 .ucf{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px 2px}
 .ucf .rb{padding:2px 14px;font-size:14px;min-height:36px}
-.cat.cs{width:38px;height:38px;font-size:16px;border-width:3px}
+.cat.cs{min-width:0;height:36px;border-radius:18px;font-size:15px;border-width:3px;padding:0 12px}
 .unote{margin:0 4px 8px;font-size:14px;color:#6b4430}
 .udt .dh img{width:52px;height:52px;border-radius:50%;border:3px solid;background:#fff7e8;object-fit:contain;padding:4px;flex:none}
 .udt .why{margin:6px 0 4px;font:700 15px "Noto Serif TC",serif;color:#a23a22}
@@ -339,6 +339,18 @@ body{font-size:16px}
 .w5 li{font-size:16px}
 .leaflet-tooltip.lb,html.m .leaflet-tooltip.lb{font-size:14px}
 .pick .sub{font-size:14px}
+/* 電腦版左側欄可收合 */
+.pn{transition:transform .25s ease,visibility 0s}
+.ptog{position:absolute;z-index:5;top:14px;left:min(400px,100vw);width:34px;height:76px;padding:0;writing-mode:vertical-rl;letter-spacing:.15em;border:1px solid var(--line,#cdb88a);border-left:0;border-radius:0 14px 14px 0;background:#f6f0e2;color:#a23a22;font:700 15px "Noto Sans TC",sans-serif;cursor:pointer;box-shadow:2px 2px 6px rgba(0,0,0,.18);transition:left .25s ease}
+.ptog:hover,.ptog:focus-visible{background:#6f9440;color:#fff;outline:none}
+.stage.pcol .pn{transform:translateX(-100%);visibility:hidden;transition:transform .25s ease,visibility 0s .25s}
+.stage.pcol .ptog{left:0}
+.stage.pcol .dt{left:48px}
+.stage.pcol .ft{left:50%}
+@media(max-width:700px){.ptog{display:none}}
+.pn .tt .sub{line-height:1.45;margin:3px 0 0}
+.subrow .swm{font-size:12px;padding:6px 10px}
+html.m .cr{font-size:11px}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 </head>
@@ -419,8 +431,10 @@ function GisMap({sel, route, ar, open, exp, mobile, onSel, uPts = [], uSel = nul
     const nl = '&copy; 內政部國土測繪中心', U = k => 'https://wmts.nlsc.gov.tw/wmts/' + k + '/default/GoogleMapsCompatible/{z}/{y}/{x}';
     const emap = L.tileLayer(U('EMAP'), {maxZoom: 19, attribution: nl + ' 通用版電子地圖'}).addTo(m);
     const photo = L.tileLayer(U('PHOTO2'), {maxZoom: 19, attribution: nl + ' 正射影像'});
+    const jm = L.tileLayer('https://gis.sinica.edu.tw/tileserver/file-exists.php?img=JM20K_1904-jpg-{z}-{x}-{y}', {maxNativeZoom: 17, maxZoom: 19, attribution: '&copy; 中央研究院人社中心GIS專題中心 日治臺灣堡圖（明治版）1:20,000'});
+    const ap76 = L.tileLayer('https://gis.sinica.edu.tw/taichung/file-exists.php?img=Taichung_aerialphoto_1976-png-{z}-{x}-{y}', {maxZoom: 19, bounds: [[24.0966555, 120.5813845], [24.2250706, 120.7347981]], attribution: '&copy; 中央研究院人社中心GIS專題中心 臺中市舊航照影像（1976）'});
     new (L.Control.extend({onAdd() { const d = L.DomUtil.create('div', 'cmp'); d.innerHTML = '<svg viewBox="-22 -32 44 54" width="44" height="54" role="img" aria-label="指北針"><circle r="18" fill="#f7f3ea" stroke="#78490a" stroke-width="2"/><text y="-21" text-anchor="middle" font-size="12" font-weight="700" fill="#78490a">N</text><path d="M0-14L6 5 0 1-6 5Z" fill="#b91c1c"/><path d="M0 14L5-3 0 1-5-3Z" fill="#78490a" opacity=".55"/></svg>'; return d; }}))({position: 'topright'}).addTo(m);
-    L.control.layers({'通用版電子地圖': emap, '正射影像（空照）': photo}).addTo(m);
+    L.control.layers({'通用版電子地圖': emap, '正射影像（空照）': photo, '日治臺灣堡圖（明治版 1904）': jm, '臺中市舊航照影像（1976）': ap76}).addTo(m);
     const me = L.layerGroup().addTo(m);
     const toast = t => { const c = m.getContainer(), d = L.DomUtil.create('div', 'toast', c); d.textContent = t; d.setAttribute('role', 'status'); setTimeout(() => d.remove(), 3600); };
     new (L.Control.extend({onAdd() {
@@ -469,7 +483,7 @@ function GisMap({sel, route, ar, open, exp, mobile, onSel, uPts = [], uSel = nul
     });
     uPts.forEach(u => {
       const z = mobile ? 36 : 42, c = CAT_COLOR[+u.cat - 1] || '#555', isSel = uSel === u.id, ic = u.icon || defIcon(c);
-      const html = '<div class="mk u' + (isSel ? ' sel' : '') + '" style="border-color:' + c + '"><img src="' + ic + '" alt=""><i style="background:' + c + '">' + u.cat + '</i></div>';
+      const html = '<div class="mk u' + (isSel ? ' sel' : '') + '" style="border-color:' + c + '"><img src="' + ic + '" alt=""><i style="background:' + c + '">' + catN(u.cat).charAt(0) + '</i></div>';
       const tip = document.createElement('span'); tip.textContent = u.n;
       L.marker([u.lat, u.lng], {title: u.n, zIndexOffset: isSel ? 1100 : 150, icon: L.divIcon({className: '', iconSize: [z, z], iconAnchor: [z / 2, z / 2], html})})
         .on('click', () => onUSel(u.id))
@@ -598,7 +612,8 @@ function Detail({p, onClose}) {
 
 /* ===== 新增點位 ===== */
 // 類別（之後可直接改這裡的名稱，例如 ['1','美食']）；顏色順序對應 1～5
-const CATS = [['1', '類別 1'], ['2', '類別 2'], ['3', '類別 3'], ['4', '類別 4'], ['5', '類別 5']];
+const CATS = [['1', '視'], ['2', '聽'], ['3', '嗅'], ['4', '味'], ['5', '觸']];
+const catN = c => (CATS.find(a => a[0] === c) || ['', c])[1];
 const CAT_COLOR = ['#c0392b', '#e67e22', '#b8860b', '#1d6fb8', '#8e44ad'];
 // 共用資料庫：貼上 Google Apps Script 網頁應用程式網址（結尾是 /exec）後，所有人新增的店家會同步。留空則只存在各自的瀏覽器。
 const SYNC_URL = 'https://script.google.com/macros/s/AKfycbxuQc3tuKyod35f_DEzWCcrVsqwPvWRWW0l1L_WP4a6XxjD2nzGJqiTJ7qOk9pzcS1m_g/exec';
@@ -706,7 +721,7 @@ function IconPad({value, color, onChange}) {
   const clear = () => { const c = cv.current, x = c.getContext('2d'); undo.current.push(x.getImageData(0, 0, c.width, c.height)); setN(undo.current.length); x.clearRect(0, 0, c.width, c.height); exp(); };
   return h('div', null,
     h('div', {className: 'padw'},
-      h('canvas', {ref: cv, className: 'pad', width: 288, height: 288, role: 'img', 'aria-label': '畫 ICON 的畫布，用手指或滑鼠在上面畫', onPointerDown: down, onPointerMove: move, onPointerUp: up, onPointerCancel: up, onPointerLeave: up}),
+      h('canvas', {ref: cv, className: 'pad', width: 480, height: 480, role: 'img', 'aria-label': '畫 ICON 的畫布，用手指或滑鼠在上面畫', onPointerDown: down, onPointerMove: move, onPointerUp: up, onPointerCancel: up, onPointerLeave: up}),
       h('div', null, h('div', {className: 'tag'}, '地圖上會長這樣：'), h('div', {className: 'mk u prev', style: {borderColor: color}}, h('img', {src: value || defIcon(color), alt: ''})))),
     h('div', {className: 'pt', role: 'group', 'aria-label': '顏色'}, COLORS.map(c => h('button', {key: c, type: 'button', className: 'sw2', style: {background: c}, 'aria-label': '顏色 ' + c, 'aria-pressed': !er && col === c, onClick: () => { setCol(c); setEr(false); }}))),
     h('div', {className: 'pt'},
@@ -731,7 +746,7 @@ function UForm({draft, onSave, onCancel, onRepick}) {
     h('h3', null, '新增店家'),
     h('div', {className: 'pos'}, '位置：' + draft.lat.toFixed(5) + ', ' + draft.lng.toFixed(5), h('button', {type: 'button', className: 'rb', onClick: () => onRepick({n: n, cat: cat, why: why, by: by, icon: icon})}, '重選位置')),
     h('div', {className: 'fld'}, h('label', {className: 'fl', htmlFor: 'uf-n'}, '地點名稱'), h('input', {id: 'uf-n', type: 'text', maxLength: 30, value: n, placeholder: '例：巷口的老榕樹', onChange: e => setN(e.target.value)})),
-    h('div', {className: 'fld'}, h('div', {className: 'fl'}, '類別'), h('div', {className: 'cats', role: 'group', 'aria-label': '類別'}, CATS.map((a, i) => h('button', {key: a[0], type: 'button', className: 'cat', title: a[1], 'aria-label': a[1], 'aria-pressed': cat === a[0], style: {borderColor: CAT_COLOR[i], background: cat === a[0] ? CAT_COLOR[i] : '#fff7e8', color: cat === a[0] ? '#fff' : CAT_COLOR[i]}, onClick: () => setCat(a[0])}, a[0])))),
+    h('div', {className: 'fld'}, h('div', {className: 'fl'}, '類別'), h('div', {className: 'cats', role: 'group', 'aria-label': '類別'}, CATS.map((a, i) => h('button', {key: a[0], type: 'button', className: 'cat', title: a[1], 'aria-label': a[1], 'aria-pressed': cat === a[0], style: {borderColor: CAT_COLOR[i], background: cat === a[0] ? CAT_COLOR[i] : '#fff7e8', color: cat === a[0] ? '#fff' : CAT_COLOR[i]}, onClick: () => setCat(a[0])}, a[1])))),
     h('div', {className: 'fld'}, h('label', {className: 'fl', htmlFor: 'uf-w'}, '為什麼選擇這個地點？', h('small', null, why.length + '/300')), h('textarea', {id: 'uf-w', maxLength: 300, value: why, placeholder: '寫下你的原因，例如：這裡是我每天上學會經過的地方…', onChange: e => setWhy(e.target.value)})),
     h('div', {className: 'fld'}, h('div', {className: 'fl'}, '畫出它的 ICON', h('small', null, '（可以不畫）')), h(IconPad, {value: icon, color: c, onChange: setIcon})),
     h('div', {className: 'fld'}, h('label', {className: 'fl', htmlFor: 'uf-b'}, '你是誰', h('small', null, '（選填，例如組別或名字）')), h('input', {id: 'uf-b', type: 'text', maxLength: 20, value: by, onChange: e => setBy(e.target.value)})),
@@ -744,7 +759,7 @@ function UDetail({u, onClose, onDel}) {
   const d = new Date(u.t), ds = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
   return h('section', {className: 'dt udt', role: 'dialog', 'aria-label': u.n},
     h('button', {className: 'x', onClick: onClose, 'aria-label': '關閉'}, '×'),
-    h('div', {className: 'dh'}, h('img', {src: u.icon || defIcon(col), alt: '', style: {borderColor: col}}), h('div', null, h('b', null, u.n), h('div', {className: 'tag'}, '類別 ' + u.cat + '｜新增店家'))),
+    h('div', {className: 'dh'}, h('img', {src: u.icon || defIcon(col), alt: '', style: {borderColor: col}}), h('div', null, h('b', null, u.n), h('div', {className: 'tag'}, catN(u.cat) + '｜新增店家'))),
     h('div', {className: 'why'}, '為什麼選擇這個地點？'), h('p', null, u.why || '（沒有填寫）'),
     h('p', {className: 'tag'}, (u.by ? '新增者：' + u.by + '　' : '') + ds),
     h('button', {className: 'rb del', onClick: () => c ? onDel(u.id) : setC(true)}, c ? '再按一次確認刪除' : '刪除這個店家'));
@@ -758,14 +773,14 @@ function UList({A, q}) {
     h('div', {className: 'ucf', role: 'group', 'aria-label': '依類別篩選'},
       h('button', {type: 'button', className: 'rb' + (A.cf === 'all' ? ' on' : ''), 'aria-pressed': A.cf === 'all', onClick: () => A.setCf(A.cf === 'all' ? '' : 'all')}, '全部'),
       CATS.map((a, i) => h('button', {key: a[0], type: 'button', className: 'cat cs', title: a[1] + '（' + cnt(a[0]) + '）', 'aria-label': a[1] + '，' + cnt(a[0]) + ' 個', 'aria-pressed': A.cf === a[0],
-        style: {borderColor: CAT_COLOR[i], background: A.cf === a[0] ? CAT_COLOR[i] : '#fff7e8', color: A.cf === a[0] ? '#fff' : CAT_COLOR[i]}, onClick: () => A.setCf(A.cf === a[0] ? '' : a[0])}, a[0]))),
+        style: {borderColor: CAT_COLOR[i], background: A.cf === a[0] ? CAT_COLOR[i] : '#fff7e8', color: A.cf === a[0] ? '#fff' : CAT_COLOR[i]}, onClick: () => A.setCf(A.cf === a[0] ? '' : a[0])}, a[1]))),
     A.note && h('p', {className: 'unote', role: 'status'}, A.note),
     A.pts.length === 0 && h('p', {className: 'noh'}, '還沒有人新增店家，按「＋ 新增店家」開始。'),
     A.pts.length > 0 && list.length === 0 && h('p', {className: 'noh'}, A.cf && A.cf !== 'all' ? '這個類別還沒有店家' : '找不到符合的新增店家'),
     list.map(u => h('div', {key: u.id, id: 'c' + u.id, className: 'card' + (A.usel === u.id ? ' sel' : '')},
       h('button', {className: 'ch', onClick: () => A.sel(u.id)},
-        h('span', {className: 'no'}, h('img', {src: u.icon || defIcon(CAT_COLOR[+u.cat - 1]), alt: ''}), h('i', {style: {background: CAT_COLOR[+u.cat - 1]}}, u.cat)),
-        h('b', null, u.n), h('span', {className: 'tag'}, '類別 ' + u.cat + (u.why ? '｜' + u.why.slice(0, 22) + (u.why.length > 22 ? '…' : '') : ''))))));
+        h('span', {className: 'no'}, h('img', {src: u.icon || defIcon(CAT_COLOR[+u.cat - 1]), alt: ''}), h('i', {style: {background: CAT_COLOR[+u.cat - 1]}}, catN(u.cat).charAt(0))),
+        h('b', null, u.n), h('span', {className: 'tag'}, catN(u.cat) + (u.why ? '｜' + u.why.slice(0, 22) + (u.why.length > 22 ? '…' : '') : ''))))));
 }
 
 const rangeBtns = (ar, setAr) => [['old', '西大墩範圍', '#c0392b'], ['town', '西屯老街範圍', '#1d6fb8']].map(r => h('button', {key: r[0], className: 'rb' + (ar[r[0]] ? ' on' : ''), 'aria-pressed': !!ar[r[0]], style: {borderBottom: '4px solid ' + r[2]}, onClick: () => setAr(a => Object.assign({}, a, {[r[0]]: !a[r[0]]}))}, r[1]));
@@ -777,18 +792,32 @@ function AddLayer({A, onStartDone}) {
     u && h(UDetail, {key: u.id, u: u, onClose: () => A.setUsel(null), onDel: A.remove}));
 }
 
+function Fit({className, max, children}) {
+  const r = React.useRef(null);
+  React.useLayoutEffect(() => {
+    const el = r.current; if (!el) return;
+    const f = () => { let z = max || 11; el.style.fontSize = z + 'px'; while (el.scrollWidth > el.clientWidth + 0.5 && z > 6.5) { z -= 0.5; el.style.fontSize = z + 'px'; } };
+    f();
+    const ro = window.ResizeObserver ? new ResizeObserver(f) : null; ro && ro.observe(el);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(f);
+    return () => ro && ro.disconnect();
+  }, []);
+  return h('p', {ref: r, className: className, style: {whiteSpace: 'nowrap', overflow: 'hidden', margin: 0}}, children);
+}
 function DesktopApp({onSwitch}) {
   const [sel, setSel] = useState(1), [route, setRoute] = useState('all'), [ar, setAr] = useState({town: false, old: false}), [modal, setModal] = useState(false), [open, setOpen] = useState(null), [q, setQ] = useState(''), [guide, setGuide, closeGuide] = useGuide(), A = useAdd();
   const pick = (id, card) => { A.setUsel(null); setOpen(o => card && sel === id && o === id ? null : id); setSel(id); };
+  const [pc, setPc] = useState(false);
   const startAdd = () => { setOpen(null); A.start(); };
   React.useEffect(() => { const e = document.getElementById('c' + sel); e && e.scrollIntoView({block: 'nearest', behavior: 'smooth'}); }, [sel]);
   const on = ar.town || ar.old;
   const rt = R[route], order = route === 'all' ? P : rt.ids.map(get).concat(P.filter(p => !rt.ids.includes(p.id)));
   const shown = A.cf ? [] : order.filter(p => matchP(p, q));
-  return h('div', {className: 'stage'},
+  return h('div', {className: 'stage' + (pc ? ' pcol' : '')},
     h(GisMap, {sel, route, ar, open: open != null ? open : A.usel, mobile: false, onSel: id => pick(id, false), uPts: route === 'all' ? A.vis : [], hideP: !!A.cf, uSel: A.usel, pickMode: A.pick, draft: A.draft, onMapPick: A.onMap, onUSel: id => { setOpen(null); A.sel(id); }, fly: A.fly}),
+    h('button', {className: 'ptog', 'aria-expanded': !pc, 'aria-label': pc ? '展開左側欄' : '收合左側欄', title: pc ? '展開左側欄' : '收合左側欄', onClick: () => setPc(!pc)}, pc ? '展開' : '收起'),
     h('aside', {className: 'list pn', 'aria-label': '標題、地圖操作與店家資訊'},
-      h('div', {className: 'tt'}, h('h1', {className: 'ttl', 'aria-label': '西屯老街走讀地圖'}, h('span', {className: 't1', 'aria-hidden': true}, '西屯'), h('span', {className: 't2', 'aria-hidden': true}, '老', h('br'), '街'), h('span', {className: 't3', 'aria-hidden': true}, '走讀地圖')), h('div', {className: 'subrow'}, h('div', {className: 'subs'}, h('p', {className: 'sub'}, '逢甲大學都市計畫與空間資訊學系 115學年度第一學期 都市計畫與空間資訊實習(四) 第五組'), h('p', {className: 'sub'}, 'USR 計畫：西屯老街與西屯國小學生走讀活動')), h('button', {className: 'swm', onClick: onSwitch}, '切換版面'))),
+      h('div', {className: 'tt'}, h('h1', {className: 'ttl', 'aria-label': '西屯老街走讀地圖'}, h('span', {className: 't1', 'aria-hidden': true}, '西屯'), h('span', {className: 't2', 'aria-hidden': true}, '老', h('br'), '街'), h('span', {className: 't3', 'aria-hidden': true}, '走讀地圖')), h('div', {className: 'subrow'}, h('div', {className: 'subs'}, h(Fit, {className: 'sub', max: 11}, '逢甲大學都市計畫與空間資訊學系 115-1學期 實習(四) 第五組')), h('button', {className: 'swm', onClick: onSwitch}, '切換版面')), h(Fit, {className: 'sub', max: 11}, '由 王晨妮 賴昱丞 賴郁棠 劉雅渝 廖左璿 林大維 黃以諒 利偉 製作'), h(Fit, {className: 'sub', max: 11}, 'USR 計畫：西屯老街與西屯國小605班走讀活動')),
       h('div', {className: 'ctl r1'},
         h('button', {className: 'rb', onClick: () => setModal(true)}, '歷史故事'),
         Object.keys(R).map(k => h('button', {key: k, className: 'rb' + (route === k && !(A.cf && k === 'all') ? ' on' : ''), 'aria-pressed': route === k && !(A.cf && k === 'all'), onClick: () => { setRoute(k); A.setCf(''); A.setUsel(null); }}, R[k].t)),
@@ -808,7 +837,7 @@ function DesktopApp({onSwitch}) {
       }),
       route === 'all' && h(UList, {A, q}))),
     open != null && h(Detail, {key: open, p: get(open), onClose: () => setOpen(null)}),
-    h('div', {className: 'ft'}, '指導教授：劉立偉教授、翁岳嵩教授、柯佩吟教授', null),
+    h('div', {className: 'ft'}, '指導教授：劉立偉教授、翁岳嵩教授、柯佩吟教授、605班級導師廖志強老師', null),
     modal && h(Modal, {title: '歷史故事', onClose: () => setModal(false)}, h(Story)),
     guide && h(Guide, {onClose: closeGuide}),
     h(AddLayer, {A}));
@@ -860,7 +889,7 @@ function MobileApp({onSwitch}) {
               h(Badge, {p}), h('b', null, p.n), h('span', {className: 'tag'}, (route !== 'all' && ok ? '第' + (i + 1) + '站｜' : '') + p.c + '｜' + p.a)));
         }),
         route === 'all' && h(UList, {A, q}),
-        h('div', {className: 'cr'}, h('p', null, '逢甲大學都市計畫與空間資訊學系 115學年度第一學期 都市計畫與空間資訊實習(四) 第五組'), h('p', null, 'USR 計畫：西屯老街與西屯國小學生走讀活動'), h('p', null, '指導教授：劉立偉教授、翁岳嵩教授、柯佩吟教授')))),
+        h('div', {className: 'cr'}, h(Fit, {max: 11}, '逢甲大學都市計畫與空間資訊學系 115-1學期 實習(四) 第五組'), h(Fit, {max: 11}, '由 王晨妮 賴昱丞 賴郁棠 劉雅渝 廖左璿 林大維 黃以諒 利偉 製作'), h(Fit, {max: 11}, 'USR 計畫：西屯老街與西屯國小605班走讀活動'), h(Fit, {max: 11}, '指導教授：劉立偉教授、翁岳嵩教授、柯佩吟教授、605班級導師廖志強老師')))),
     open != null && h(Detail, {key: open, p: get(open), onClose: () => setOpen(null)}),
     modal && h(Modal, {title: '歷史故事', onClose: () => setModal(false)}, h(Story)),
     guide && h(Guide, {onClose: closeGuide}),
@@ -870,12 +899,12 @@ function MobileApp({onSwitch}) {
 
 function Chooser({onPick}) {
   const rec = window.innerWidth <= 700 ? 'm' : 'd';
-  const opt = (k, t, d) => h('button', {className: 'opt', onClick: () => onPick(k)}, rec === k && h('em', null, '建議'), h('b', null, t), h('span', null, d));
+  const opt = (k, t, d) => h('button', {className: 'opt', onClick: () => onPick(k)}, rec === k && h('em', null, '建議'), h('b', null, t));
   return h('div', {className: 'pick', role: 'dialog', 'aria-label': '選擇瀏覽版面'}, h('div', {className: 'in'},
     h('h1', {className: 'ttl', 'aria-label': '西屯老街走讀地圖'}, h('span', {className: 't1', 'aria-hidden': true}, '西屯'), h('span', {className: 't2', 'aria-hidden': true}, '老', h('br'), '街'), h('span', {className: 't3', 'aria-hidden': true}, '走讀地圖')),
     h('p', {className: 'sub'}, '逢甲大學都市計畫與空間資訊學系 115學年度第一學期'), h('p', {className: 'sub'}, '都市計畫與空間資訊實習(四) 第五組'),
     h('h2', null, '請選擇瀏覽版面'),
-    h('div', {className: 'opts'}, opt('d', '電腦版', '寬螢幕，左側資訊欄加全景地圖'), opt('m', '手機版', '直式螢幕，全螢幕地圖加底部面板')),
+    h('div', {className: 'opts'}, opt('d', '電腦版(平板版)'), opt('m', '手機版')),
     h('p', {className: 'note'}, '進入後可隨時按「切換版面」重新選擇。')));
 }
 
